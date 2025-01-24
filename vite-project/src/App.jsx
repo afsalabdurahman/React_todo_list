@@ -4,32 +4,69 @@ import "./App.css";
 function App() {
   let [todos, setTodo] = useState([]);
   let [value, setValue] = useState("");
+  let [editing, setEditing] = useState(false)
+  let [edited, SetEdited] = useState(null)
+  let [conform, Setconform] = useState();
 
-  console.log(todos, "values");
 
+  function editTask(editvalue, i) {
+    setEditing(true)
+    Setconform(editvalue);
+    SetEdited(editvalue)
+
+  }
+
+
+  let insertUpdate = (value) => {
+    console.log(value, "edited upate button", edited, "update edite")
+    console.log(conform, "controfm ", value, "value new")
+    console.log(todos, "todoss")
+    setTodo(todos.map((e) => {
+      if (e.key == conform.key) {
+        return { ...e, input: value };
+      }
+      return e
+    }))
+    // todos[index].input=value
+    setEditing(false)
+  }
   return (
     <>
       <div class='container'>
         <h1>My To-Do List</h1>
         <div class='todo-input'>
-          <input
+
+          {editing ? <input
             type='text'
+            value={edited.input}
+            onChange={(e) => {
+              SetEdited(e.target.value);
+            }}
+            id='taskInput'
+            placeholder='Add a new task...'
+
+          /> : <input
+            type='text'
+
             onChange={(e) => {
               setValue(e.target.value);
             }}
             id='taskInput'
             placeholder='Add a new task...'
-          />
+
+          />}
+
+
           <button
             id='addTaskBtn'
             onClick={() => {
-              setTodo([...todos, { input: value, key: Date.now(), status: false }]);
+              editing ? insertUpdate(edited) : setTodo([...todos, { input: value, key: Date.now(), status: false }]);
             }}
           >
-            Add Task
+            {editing ? "Update" : "Add Task"}
           </button>
         </div>
-        {todos.map((e) => {
+        {todos.map((e, i) => {
           return (
             <ul
               id='taskList'
@@ -95,7 +132,10 @@ function App() {
                   >
                     delete
                   </button>
+
                   : null}
+                {e.status ? null :
+                  <button onClick={() => { editTask(e) }}>Edit</button>}
               </li>
 
             </ul>
@@ -103,6 +143,9 @@ function App() {
           );
 
         })}
+
+
+
       </div>
     </>
   );
